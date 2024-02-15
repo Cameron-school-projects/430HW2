@@ -21,9 +21,18 @@ with open('BostonNumbers.txt',encoding='utf-8') as f:
             allVals[idx].extend(lineVals)
             idx+=1
 
-print(allVals)
 #calculate mean and stdev for each set 
+validationSet = allVals[(len(allVals)-50):]
+trainingSet = allVals[:(len(allVals)-50)]
+validationSet = np.array(validationSet)
+trainingSet = np.array(trainingSet)
 
+#normalize data
+for i in range(0,12):
+    mean = statistics.mean(trainingSet[:,i])
+    standardDeviation = statistics.stdev(trainingSet[:,i])
+    for index, number in enumerate(trainingSet[:,i]):
+        trainingSet[index,i] = abs(number-mean)/standardDeviation
 
 def calculateCost(m, X, y):
     total = 0
