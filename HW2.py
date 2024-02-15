@@ -1,47 +1,27 @@
 import numpy as np
 import re
 import statistics
-crim = []
-zn = []
-indus = []
-chas = []
-nox = []
-rm = []
-age = []
-dis = []
-rad = []
-tax = []
-ptratio = []
-b = []
-lstat = []
-medv = []
+allVals =[]
 with open('BostonNumbers.txt',encoding='utf-8') as f:
-    for idx,line in f:
+    idx =0 
+    for line in f:
         #see if we split the first or second row
         #remove extra whitespace
         line=line.strip()
-
         #split based on any amount of whitespace
         lineVals=re.split(r"[ \t\n]+",line)
         #check length of split
         length = len(lineVals)
+        #convert values to floats
+        for index,number in enumerate(lineVals):
+            lineVals[index]=float(number)
         if(length>3):
-            crim.append(float(lineVals[0]))
-            zn.append(float(lineVals[1]))
-            indus.append(float(lineVals[2]))
-            chas.append(float(lineVals[3]))
-            nox.append(float(lineVals[4]))
-            rm.append(float(lineVals[5]))
-            age.append(float(lineVals[6]))
-            dis.append(float(lineVals[7]))
-            rad.append(float(lineVals[8]))
-            tax.append(float(lineVals[9]))
-            ptratio.append(float(lineVals[10]))
+            allVals.append(lineVals)
         else:
-            b.append(float(lineVals[0]))
-            lstat.append(float(lineVals[1]))
-            medv.append(float(lineVals[2]))
+            allVals[idx].extend(lineVals)
+            idx+=1
 
+print(allVals)
 #calculate mean and stdev for each set 
 
 
@@ -102,20 +82,6 @@ def calculateGradientDescent(x,y,theta0=0,theta1=0,alpha=0.01):
     return theta0,theta1
 
 
-
-plt.scatter(xVals,yVals,marker='x',c='red')
-# naming the x axis
-plt.xlabel('Population of City in 10,000s')
-# naming the y axis
-plt.ylabel('Profit in 10,000s')
- 
-# function to show the plot
-plt.show()
-
-
-
-# function to show the plot
-plt.show()
 
 
 
