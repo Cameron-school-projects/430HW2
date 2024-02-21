@@ -28,24 +28,24 @@ validationSet = np.array(validationSet)
 trainingSet = np.array(trainingSet)
 allVals = np.array(allVals)
 #normalize data
-for i in range(0,12):
+for i in range(0,14):
     mean = statistics.mean(trainingSet[:,i])
     meanVal = statistics.mean(validationSet[:,i])
     standardDeviation = statistics.stdev(trainingSet[:,i])
     standardDeviationVal = statistics.stdev(validationSet[:,i])
     for index, number in enumerate(trainingSet[:,i]):
         #if number is 0, we dont need to divide, as it could give us NAN
-        if(trainingSet[index,i]!=0):
+        if(standardDeviation!=0 and mean!=0):
             trainingSet[index,i] = abs(number-mean)/standardDeviation
     for index2,number2 in enumerate(validationSet[:,i]):
         #if number is 0, we dont need to divide, as it could give us NAN
-        if(validationSet[index2,i]!=0):
+        if(standardDeviationVal!=0 and meanVal!=0):
             validationSet[index2,i]=abs(number2-meanVal)/standardDeviationVal
 
 def calculateCost(m, X, y):
     total = 0
     for i in range(m-1):
-        squared_error = (y[i] - X[i]) ** 2
+        squared_error = (X[i] - y[i]) ** 2
         total += squared_error
     
     return total * (1 / (2*m))
@@ -98,12 +98,12 @@ def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.001,):
         sums =[]
         #calculate new predicted values
         DJ0=sumDJ0(hThetas,output,m)
-        sums.append(thetas[0] - (1/m) * alpha * DJ0)
+        sums.append(thetas[0] - alpha * (1/m) * DJ0)
         #calculate theta 1 - theta n+1
         for i in range(1,numOfInputs+1):
             #inputs does not account for theta0, so we subtract one from its index
             DJN = sumDJN(hThetas,inputs[i-1],output,m)
-            sums.append(thetas[i] - (1/m) * alpha * DJN)
+            sums.append(thetas[i] - alpha * (1/m) * DJN)
         oldCost = cost
         #assign values together 
         sums = np.array(sums)
@@ -128,16 +128,18 @@ inputs = np.array([trainingSet[:,6],trainingSet[:,9]])
 output = np.array(trainingSet[:,13])
 thetas = np.array([0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,2)
-print(newThetas)
+print(len(validationSet))
 # test = newThetas[0] + newThetas[1]*validationSet[0][0]+newTvalidationSet[0][1]
-# print("predicted values for validation set")
-# for i in range(0,49):
-#     print(f"predicted value for {i}: {predictValue1(newThetas,validationSet[i],2)}, actual value: {validationSet[i][13]}")
+print("predicted values for validation set")
+for i in range(0,10):
+    print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i],2)}, actual value: {validationSet[i][13]}")
 # #calculation using all columns
-# inputs = np.array(trainingSet[:,:12])
-# output = np.array(trainingSet[:,13])
-# thetas = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-# newThetas = calculateGradientDescent(inputs,output,thetas,13)
-# for i in range(0,49):
-#     print(f"predicted value for {i}: {newThetas[i]}, actual value: {validationSet[i]}")
+#the : operator needs to be +1 the index, looks like it takes it at 1 based? not sure
+inputs = inputs = np.array([trainingSet[:,0],trainingSet[:,1],trainingSet[:,2],trainingSet[:,3],trainingSet[:,4],trainingSet[:,5],trainingSet[:,6],trainingSet[:,7],trainingSet[:,8],trainingSet[:,9],trainingSet[:,10],trainingSet[:,11],trainingSet[:,12]])
+output = np.array(trainingSet[:,13])
+thetas = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
+newThetas = calculateGradientDescent(inputs,output,thetas,13)
+print("predicted values for validation set with all columns")
+for i in range(0,49):
+    print(f"predicted value for {i}: {predictValue1(newThetas,validationSet[i],2)}, actual value: {validationSet[i][13]}")
 
