@@ -144,7 +144,7 @@ output = np.array(trainingSet[:,13])
 thetas = np.array([0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,2)
 print("predicted values for validation set")
-for i in range(0,10):
+for i in range(0,49):
     print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
 # #calculation using all columns
 #the : operator needs to be +1 the index, looks like it takes it at 1 based? not sure
