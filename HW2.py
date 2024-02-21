@@ -75,22 +75,16 @@ def calculateHtheta(allThetas,x,theta0):
 
 def getAllHthetas(thetas,inputs,numOfInputs,m):
     hThetas = []
-    newInputs = []
     thetasMinusTheta0=thetas[1:]
     #calculate start value of htheta
     #prevents us from going out of range when we calculate inputs[i][i+x]
     for i in range(0,m):
-        #pull single row for h(theta)
-        for x in range(0,numOfInputs):
-            newInputs.append(inputs[x][i])
-        hThetas.append(calculateHtheta(thetasMinusTheta0,newInputs,thetas[0]))
-        #clear new inputs
-        newInputs=[]
+        hThetas.append(calculateHtheta(thetasMinusTheta0,inputs[i],thetas[0]))
     return hThetas
-def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.001,):
+def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.1):
     #using one array for input, array for thetas, loop to calculate new vals, loop to assign new vals
     #define as a numpy array
-    m=len(inputs[0])
+    m=len(inputs)
     #get starting cost and hThetas
     hThetas = getAllHthetas(thetas,inputs,numOfInputs,m)
     cost = calculateCost(m,hThetas,output)
@@ -102,7 +96,7 @@ def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.001,):
         #calculate theta 1 - theta n+1
         for i in range(1,numOfInputs+1):
             #inputs does not account for theta0, so we subtract one from its index
-            DJN = sumDJN(hThetas,inputs[i-1],output,m)
+            DJN = sumDJN(hThetas,inputs[:,i-1],output,m)
             sums.append(thetas[i] - alpha * (1/m) * DJN)
         oldCost = cost
         #assign values together 
@@ -126,8 +120,18 @@ def predictValue2(newTheats,validationSet,numOfInputs):
     for i in range(0,numOfInputs):
         sum = sum + newTheats[i]*validationSet[i]
     return sum
+def buildInputs(appenedInputs,numOfInputs):
+    builtInput=[]
+    for i in range(0,len(appenedInputs[0])):
+        newInputs = []
+        for x in range(0,numOfInputs):
+            newInputs.append(appenedInputs[x][i])
+        builtInput.append(newInputs)
+    builtInput = np.array(builtInput)
+    return builtInput
 #first calculation using two inputs
-inputs = np.array([trainingSet[:,6],trainingSet[:,9]])
+
+inputs = buildInputs([trainingSet[:,6],trainingSet[:,9]],2)
 #add the two columns of inputs
 #output column
 output = np.array(trainingSet[:,13])
@@ -140,7 +144,7 @@ for i in range(0,10):
     print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
 # #calculation using all columns
 #the : operator needs to be +1 the index, looks like it takes it at 1 based? not sure
-inputs = inputs = np.array([trainingSet[:,0],trainingSet[:,1],trainingSet[:,2],trainingSet[:,3],trainingSet[:,4],trainingSet[:,5],trainingSet[:,6],trainingSet[:,7],trainingSet[:,8],trainingSet[:,9],trainingSet[:,10],trainingSet[:,11],trainingSet[:,12]])
+inputs = inputs = buildInputs([trainingSet[:,0],trainingSet[:,1],trainingSet[:,2],trainingSet[:,3],trainingSet[:,4],trainingSet[:,5],trainingSet[:,6],trainingSet[:,7],trainingSet[:,8],trainingSet[:,9],trainingSet[:,10],trainingSet[:,11],trainingSet[:,12]],13)
 output = np.array(trainingSet[:,13])
 thetas = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,13)
