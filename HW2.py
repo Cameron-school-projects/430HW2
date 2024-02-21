@@ -117,10 +117,15 @@ def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.001,):
             break
     return thetas
 
-def predictValue1(newTheats,validationSet,numOfInputs):
+def predictValue1(newTheats,validationSet):
     sum=newTheats[0]+newTheats[1]*validationSet[6]+newTheats[2]*validationSet[9]
     return sum
 
+def predictValue2(newTheats,validationSet,numOfInputs):
+    sum=newTheats[0]
+    for i in range(0,numOfInputs):
+        sum = sum + newTheats[i]*validationSet[i]
+    return sum
 #first calculation using two inputs
 inputs = np.array([trainingSet[:,6],trainingSet[:,9]])
 #add the two columns of inputs
@@ -132,7 +137,7 @@ print(len(validationSet))
 # test = newThetas[0] + newThetas[1]*validationSet[0][0]+newTvalidationSet[0][1]
 print("predicted values for validation set")
 for i in range(0,10):
-    print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i],2)}, actual value: {validationSet[i][13]}")
+    print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
 # #calculation using all columns
 #the : operator needs to be +1 the index, looks like it takes it at 1 based? not sure
 inputs = inputs = np.array([trainingSet[:,0],trainingSet[:,1],trainingSet[:,2],trainingSet[:,3],trainingSet[:,4],trainingSet[:,5],trainingSet[:,6],trainingSet[:,7],trainingSet[:,8],trainingSet[:,9],trainingSet[:,10],trainingSet[:,11],trainingSet[:,12]])
@@ -141,5 +146,5 @@ thetas = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,13)
 print("predicted values for validation set with all columns")
 for i in range(0,49):
-    print(f"predicted value for {i}: {predictValue1(newThetas,validationSet[i],2)}, actual value: {validationSet[i][13]}")
+    print(f"predicted value for {i}: {predictValue2(newThetas,validationSet[i],2)}, actual value: {validationSet[i][13]}")
 
