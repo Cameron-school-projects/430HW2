@@ -4,8 +4,16 @@ import statistics
 allVals =[]
 #read in values
 with open('BostonNumbers.txt',encoding='utf-8') as f:
-    idx =0 
+    idx=0 
+    #used for skipping header data
+    lineNum = 0
+    #skipping lines of header and non numerical data (first 22 rows)
     for line in f:
+        if(lineNum<22):
+            next(f)
+            lineNum=lineNum+1
+            continue
+        
         #see if we split the first or second row
         #remove extra whitespace
         line=line.strip()
@@ -22,29 +30,25 @@ with open('BostonNumbers.txt',encoding='utf-8') as f:
             allVals[idx].extend(lineVals)
             idx+=1
 #split sets
+
+allVals = np.array(allVals)
+#normalize data
+for i in range(0,14):
+    mean = statistics.mean(allVals[:,i])
+    standardDeviation = statistics.stdev(allVals[:,i])
+    for index, number in enumerate(allVals[:,i]):
+        #if number is 0, we dont need to divide, as it could give us NAN
+        if(standardDeviation!=0 and mean!=0):
+            allVals[index,i] = abs(number-mean)/standardDeviation
+
 validationSet = allVals[(len(allVals)-50):]
 trainingSet = allVals[:(len(allVals)-50)]
 validationSet = np.array(validationSet)
 trainingSet = np.array(trainingSet)
-allVals = np.array(allVals)
-#normalize data
-for i in range(0,14):
-    mean = statistics.mean(trainingSet[:,i])
-    meanVal = statistics.mean(validationSet[:,i])
-    standardDeviation = statistics.stdev(trainingSet[:,i])
-    standardDeviationVal = statistics.stdev(validationSet[:,i])
-    for index, number in enumerate(trainingSet[:,i]):
-        #if number is 0, we dont need to divide, as it could give us NAN
-        if(standardDeviation!=0 and mean!=0):
-            trainingSet[index,i] = abs(number-mean)/standardDeviation
-    for index2,number2 in enumerate(validationSet[:,i]):
-        #if number is 0, we dont need to divide, as it could give us NAN
-        if(standardDeviationVal!=0 and meanVal!=0):
-            validationSet[index2,i]=abs(number2-meanVal)/standardDeviationVal
 
 def calculateCost(m, X, y):
     total = 0
-    for i in range(m-1):
+    for i in range(m):
         squared_error = (X[i] - y[i]) ** 2
         total += squared_error
     
@@ -68,7 +72,7 @@ def sumDJN(hTheta,y,x,m):
 def calculateHtheta(allThetas,x,theta0):
     allThetas = allThetas.transpose()
     #calculate htheta without theta0, so we can use the transpose and multiply method
-    newThetas =np.dot(allThetas,x)
+    newThetas = np.matmul(allThetas,x)
     #add theta0 back in
     newThetas = newThetas+theta0
     return newThetas
@@ -83,7 +87,6 @@ def getAllHthetas(thetas,inputs,numOfInputs,m):
     return hThetas
 def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.1):
     #using one array for input, array for thetas, loop to calculate new vals, loop to assign new vals
-    #define as a numpy array
     m=len(inputs)
     #get starting cost and hThetas
     hThetas = getAllHthetas(thetas,inputs,numOfInputs,m)
@@ -96,49 +99,50 @@ def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.1):
         #calculate theta 1 - theta n+1
         for i in range(1,numOfInputs+1):
             #inputs does not account for theta0, so we subtract one from its index
-            DJN = sumDJN(hThetas,inputs[:,i-1],output,m)
+            #get each column, which represents a different variable of the calculation
+            DJN = sumDJN(hThetas,output,inputs[:,i-1],m)
             sums.append(thetas[i] - alpha * (1/m) * DJN)
         oldCost = cost
-        #assign values together 
         sums = np.array(sums)
+        #assign values together 
         for i in range(0,numOfInputs+1):
             temp = sums[i]
             thetas[i] = temp
+
         hThetas = getAllHthetas(thetas,inputs,numOfInputs,m)
         cost = calculateCost(m,hThetas,output)
+        costDifference = cost-oldCost
         #break if we've reached acceptable accuracy
-        if(abs(cost-oldCost)<.01):
+        if(abs(costDifference)<.01):
             break
     return thetas
 
-def predictValue1(newTheats,validationSet):
-    sum=newTheats[0]+newTheats[1]*validationSet[6]+newTheats[2]*validationSet[9]
+def predictValue1(newThetas,validationSet):
+    sum=newThetas[0]+newThetas[1]*validationSet[6]+newThetas[2]*validationSet[9]
     return sum
 
-def predictValue2(newTheats,validationSet,numOfInputs):
-    sum=newTheats[0]
+def predictValue2(newThetas,validationSet,numOfInputs):
+    sum=newThetas[0]
     for i in range(0,numOfInputs):
-        sum = sum + newTheats[i]*validationSet[i]
+        sum = sum + newThetas[i]*validationSet[i]
     return sum
-def buildInputs(appenedInputs,numOfInputs):
+
+def buildInputs(appendedInputs,numOfInputs):
     builtInput=[]
-    for i in range(0,len(appenedInputs[0])):
+    for i in range(0,len(appendedInputs[0])):
         newInputs = []
         for x in range(0,numOfInputs):
-            newInputs.append(appenedInputs[x][i])
+            newInputs.append(appendedInputs[x][i])
         builtInput.append(newInputs)
     builtInput = np.array(builtInput)
     return builtInput
 #first calculation using two inputs
-
-inputs = buildInputs([trainingSet[:,6],trainingSet[:,9]],2)
 #add the two columns of inputs
+inputs = buildInputs([trainingSet[:,6],trainingSet[:,9]],2)
 #output column
 output = np.array(trainingSet[:,13])
 thetas = np.array([0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,2)
-print(len(validationSet))
-# test = newThetas[0] + newThetas[1]*validationSet[0][0]+newTvalidationSet[0][1]
 print("predicted values for validation set")
 for i in range(0,10):
     print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
