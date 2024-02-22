@@ -59,7 +59,7 @@ for i in range(0,14):
         if(standardDeviationVal!=0 and meanVal!=0):
             validationSet[index2,i]=abs(number2-meanVal)/standardDeviationVal    
 
-
+#calculates J value
 def calculateCost(m, X, y):
     total = 0
     for i in range(m):
@@ -67,14 +67,14 @@ def calculateCost(m, X, y):
         total += squared_error
     
     return total * (1 / (2*m))
-
+#sum for theta 0
 def sumDJ0(hTheta,y,m):
     sum=0
     for idx,yi in enumerate(y):
         sum+=(hTheta[idx]-yi)
     return sum 
 
-
+#sum for theta1-n
 def sumDJN(hTheta,y,x,m):
     sum=0
     for idx,yi in enumerate(y):
@@ -82,7 +82,7 @@ def sumDJN(hTheta,y,x,m):
 
     return sum
 
-
+#calculates hTheta for one point
 def calculateHtheta(allThetas,x,theta0):
     allThetas = allThetas.transpose()
     #calculate htheta without theta0, so we can use the transpose and multiply method
@@ -90,7 +90,7 @@ def calculateHtheta(allThetas,x,theta0):
     #add theta0 back in
     newThetas = newThetas+theta0
     return newThetas
-
+#calculates all hthetas for one cycle
 def getAllHthetas(thetas,inputs,numOfInputs,m):
     hThetas = []
     thetasMinusTheta0=thetas[1:]
@@ -130,17 +130,17 @@ def calculateGradientDescent(inputs,output,thetas,numOfInputs,alpha=0.01):
         if(abs(costDifference)<.01):
             break
     return thetas
-
+#prediction for only 2 columns
 def predictValue1(newThetas,validationSet):
     sum=newThetas[0]+newThetas[1]*validationSet[6]+newThetas[2]*validationSet[9]
     return sum
-
+#prediction for all columns
 def predictValue2(newThetas,validationSet,numOfInputs):
     sum=newThetas[0]
     for i in range(0,numOfInputs):
         sum = sum + newThetas[i]*validationSet[i]
     return sum
-
+#takes inputs and transforms them into an easier to use format
 def buildInputs(appendedInputs,numOfInputs):
     builtInput=[]
     for i in range(0,len(appendedInputs[0])):
