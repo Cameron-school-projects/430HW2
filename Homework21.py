@@ -39,19 +39,26 @@ o_trainingSet = allVals[:(len(allVals)-50)]
 o_validationSet = np.array(o_validationSet)
 o_trainingSet = np.array(o_trainingSet)
 
-#normalize data
-for i in range(0,14):
-    mean = statistics.mean(allVals[:,i])
-    standardDeviation = statistics.stdev(allVals[:,i])
-    for index, number in enumerate(allVals[:,i]):
-        #if number is 0, we dont need to divide, as it could give us NAN
-        if(standardDeviation!=0 and mean!=0):
-            allVals[index,i] = abs(number-mean)/standardDeviation
-
 validationSet = allVals[(len(allVals)-50):]
 trainingSet = allVals[:(len(allVals)-50)]
 validationSet = np.array(validationSet)
 trainingSet = np.array(trainingSet)
+
+#normalize data
+for i in range(0,14):
+    mean = statistics.mean(trainingSet[:,i])
+    meanVal = statistics.mean(validationSet[:,i])
+    standardDeviation = statistics.stdev(trainingSet[:,i])
+    standardDeviationVal = statistics.stdev(validationSet[:,i])
+    for index, number in enumerate(trainingSet[:,i]):
+        #if number is 0, we dont need to divide, as it could give us NAN
+        if(standardDeviation!=0 and mean!=0):
+            trainingSet[index,i] = abs(number-mean)/standardDeviation
+    for index2,number2 in enumerate(validationSet[:,i]):
+        #if number is 0, we dont need to divide, as it could give us NAN
+        if(standardDeviationVal!=0 and meanVal!=0):
+            validationSet[index2,i]=abs(number2-meanVal)/standardDeviationVal    
+
 
 def calculateCost(m, X, y):
     total = 0
