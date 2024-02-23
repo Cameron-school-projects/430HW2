@@ -218,6 +218,7 @@ sum_square_error = 0
 for i in range(0, len(predicted_y)):
     sum_square_error += (predicted_y[i] - actual_y[i])**2
 mean_square_error = sum_square_error / len(predicted_y)
+outFile.write(f"Thetas For Task 2a with Closed Form Solution:\n {thetas.transpose()}\n")
 print("predicted values for validation set with AGE and TAX with the Closed Form Solution")
 outFile.write("Predicted values for validation set with AGE and TAX with the Closed Form Solution:\n")
 for i in range(0,50):
