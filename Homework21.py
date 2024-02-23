@@ -32,11 +32,6 @@ with open('boston.txt',encoding='utf-8') as f:
 #split sets
 
 allVals = np.array(allVals)
-#Save non-normalized data for part 2
-o_validationSet = allVals[(len(allVals)-50):]
-o_trainingSet = allVals[:(len(allVals)-50)]
-o_validationSet = np.array(o_validationSet)
-o_trainingSet = np.array(o_trainingSet)
 
 validationSet = allVals[(len(allVals)-50):]
 trainingSet = allVals[:(len(allVals)-50)]
@@ -157,33 +152,33 @@ output = np.array(trainingSet[:,13])
 thetas = np.array([0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,2)
 outFile = open("output.txt","w")
-outFile.write(f"{newThetas}")
-outFile.write("predicted values for validation set")
+outFile.write(f"Thetas For Task 2a:\n {newThetas}\n")
+outFile.write("Predicted values for validation set:\n")
 print("predicted values for validation set")
 for i in range(0,50):
-    print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
-    outFile.write(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}\n")
+    print(f"Predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
+    outFile.write(f"Predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}.\n")
 #calculate sum of square and mean square error for the data
 sum_square_error = 0
 for i in range(0, len(validationSet)):
     sum_square_error = sum_square_error + (predictValue1(newThetas,validationSet[i]) - validationSet[i][13])**2
 mean_square_error = sum_square_error / len(validationSet)
 print("Sum of Square Error for MEDV calculated using AGE and TAX:", sum_square_error)
-outFile.write(f"Sum of Square Error for MEDV calculated using AGE and TAX:{sum_square_error}")
+outFile.write(f"Sum of Square Error for MEDV calculated using AGE and TAX:{sum_square_error}\n")
 print("Mean Square Error for MEDV calculated using AGE and TAX:", mean_square_error)
-outFile.write(f"Mean Square Error for MEDV calculated using AGE and TAX:{mean_square_error}")
+outFile.write(f"Mean Square Error for MEDV calculated using AGE and TAX:{mean_square_error}\n")
 # #calculation using all columns
 #the : operator needs to be +1 the index, looks like it takes it at 1 based? not sure
 inputs = inputs = buildInputs([trainingSet[:,0],trainingSet[:,1],trainingSet[:,2],trainingSet[:,3],trainingSet[:,4],trainingSet[:,5],trainingSet[:,6],trainingSet[:,7],trainingSet[:,8],trainingSet[:,9],trainingSet[:,10],trainingSet[:,11],trainingSet[:,12]],13)
 output = np.array(trainingSet[:,13])
 thetas = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
 newThetas = calculateGradientDescent(inputs,output,thetas,13)
-outFile.write(f"{newThetas}")
+outFile.write(f"Thetas For Task 2b:\n {newThetas}\n")
 print("predicted values for validation set with all columns")
-outFile.write("predicted values for validation set with all columns")
+outFile.write("Predicted values for validation set with all inputs:\n")
 for i in range(0,50):
     print(f"predicted value for {i+1}: {predictValue2(newThetas,validationSet[i],13)}, actual value: {validationSet[i][13]}")
-    outFile.write(f"predicted value for {i+1}: {predictValue2(newThetas,validationSet[i],13)}, actual value: {validationSet[i][13]}")
+    outFile.write(f"Predicted value for {i+1}: {predictValue2(newThetas,validationSet[i],13)}, actual value: {validationSet[i][13]}\n")
 
 #calculate sum of square and mean square error for the data
 sum_square_error = 0
@@ -191,9 +186,9 @@ for i in range(0, len(validationSet)):
     sum_square_error = sum_square_error + (predictValue2(newThetas,validationSet[i],13) - validationSet[i][13])**2
 mean_square_error = sum_square_error / len(validationSet)
 print("Sum of Square Error for MEDV calculated using all variables:", sum_square_error)
-outFile.write(f"Sum of Square Error for MEDV calculated using all variables:{sum_square_error}")
+outFile.write(f"Sum of Square Error for MEDV calculated using all variables:{sum_square_error}\n")
 print("Mean Square Error for MEDV calculated using all variables:", mean_square_error)
-outFile.write(f"Mean Square Error for MEDV calculated using all variables:{mean_square_error}")
+outFile.write(f"Mean Square Error for MEDV calculated using all variables:{mean_square_error}\n")
 ###############################################################################
 # Part 2
 
@@ -210,23 +205,13 @@ set_1 = np.append(set_1, arrayofTax, axis = 1)
 # print(set_1)
 training_y = t_set[(len(t_set)-1):]
 #thetas = closed form solution Theta = (X^T*X)^-1 * X^T * y
-#split up variables for testing
-set_x_t = set_1.transpose()
-x_t_x= np.matmul(set_x_t, set_1)
-inv_x_t_x = np.linalg.inv(x_t_x)
-inv_x_t_x_x_t = np.matmul(inv_x_t_x, set_x_t)
-thetas= np.matmul(inv_x_t_x_x_t, training_y.transpose())
-#calculate in one line
-thetas2 = np.matmul(np.matmul(np.linalg.inv(np.matmul(set_1.transpose(), set_1)), set_1.transpose()), training_y.transpose())
-#print(thetas)
-#print(thetas2)
+thetas = np.matmul(np.matmul(np.linalg.inv(np.matmul(set_1.transpose(), set_1)), set_1.transpose()), training_y.transpose())
+
 predicted_y = []
 
 #calculate predicted y for the validation set
 for i in range(0, len(validationSet)):
     predicted_y.append(thetas[0][0] + (thetas[1][0] * validationSet[i][6]) + (thetas[2][0] * validationSet[i][9]))
-    #print(o_validationSet[i][6], o_validationSet[i][9])
-    #output.write(o_validationSet[i][6], o_validationSet[i][9])
   
 #calculate sum of square and mean square error for the data
 sum_square_error = 0
@@ -237,9 +222,9 @@ print("predicted values for validation set with AGE and TAX with the Closed Form
 outFile.write("predicted values for validation set with AGE and TAX with the Closed Form Solution")
 for i in range(0,50):
     print(f"predicted value for {i+1}: {predicted_y[i]}, actual value: {actual_y[i]}")
-    outFile.write(f"predicted value for {i+1}: {predicted_y[i]}, actual value: {actual_y[i]}\n")
+    outFile.write(f"Predicted value for {i+1}: {predicted_y[i]}, actual value: {actual_y[i]}\n")
 print("Sum of Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution:", sum_square_error)
-outFile.write(f"Sum of Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution: {sum_square_error}")
+outFile.write(f"Sum of Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution: {sum_square_error}\n")
 print("Mean Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution:", mean_square_error)
-outFile.write(f"Mean Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution:{mean_square_error}")
+outFile.write(f"Mean Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution:{mean_square_error}\n")
 outFile.close()
