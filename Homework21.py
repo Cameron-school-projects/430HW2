@@ -136,8 +136,8 @@ def predictValue1(newThetas,validationSet):
 #prediction for all columns
 def predictValue2(newThetas,validationSet,numOfInputs):
     sum=newThetas[0]
-    for i in range(1,numOfInputs):
-        sum = sum + newThetas[i]*validationSet[i]
+    for i in range(1,numOfInputs + 1):
+        sum = sum + newThetas[i]*validationSet[i - 1]
     return sum
 #takes inputs and transforms them into an easier to use format
 def buildInputs(appendedInputs,numOfInputs):
@@ -188,11 +188,11 @@ for i in range(0,50):
 #calculate sum of square and mean square error for the data
 sum_square_error = 0
 for i in range(0, len(validationSet)):
-    sum_square_error = sum_square_error + (predictValue2(newThetas,validationSet[i],2) - validationSet[i][13])**2
+    sum_square_error = sum_square_error + (predictValue2(newThetas,validationSet[i],13) - validationSet[i][13])**2
 mean_square_error = sum_square_error / len(validationSet)
 print("Sum of Square Error for MEDV calculated using all variables:", sum_square_error)
 outFile.write(f"Sum of Square Error for MEDV calculated using all variables:{sum_square_error}")
-print("Mean Square Error for MEDV calculated using AGE and TAX:", mean_square_error)
+print("Mean Square Error for MEDV calculated using all variables:", mean_square_error)
 outFile.write(f"Mean Square Error for MEDV calculated using all variables:{mean_square_error}")
 ###############################################################################
 # Part 2
