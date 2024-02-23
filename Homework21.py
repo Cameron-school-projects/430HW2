@@ -162,7 +162,7 @@ outFile.write("predicted values for validation set")
 print("predicted values for validation set")
 for i in range(0,50):
     print(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
-    outFile.write(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}")
+    outFile.write(f"predicted value for {i+1}: {predictValue1(newThetas,validationSet[i])}, actual value: {validationSet[i][13]}\n")
 #calculate sum of square and mean square error for the data
 sum_square_error = 0
 for i in range(0, len(validationSet)):
@@ -237,7 +237,7 @@ print("predicted values for validation set with AGE and TAX with the Closed Form
 outFile.write("predicted values for validation set with AGE and TAX with the Closed Form Solution")
 for i in range(0,50):
     print(f"predicted value for {i+1}: {predicted_y[i]}, actual value: {actual_y[i]}")
-    outFile.write(f"predicted value for {i+1}: {predicted_y[i]}, actual value: {actual_y[i]}")
+    outFile.write(f"predicted value for {i+1}: {predicted_y[i]}, actual value: {actual_y[i]}\n")
 print("Sum of Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution:", sum_square_error)
 outFile.write(f"Sum of Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution: {sum_square_error}")
 print("Mean Square Error for MEDV calculated using AGE and TAX with the Closed Form Solution:", mean_square_error)
