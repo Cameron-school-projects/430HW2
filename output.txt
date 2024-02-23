@@ -111,6 +111,8 @@ Predicted value for 49: 25.929342067421228, actual value: 22.0
 Predicted value for 50: 21.64229776504998, actual value: 11.9
 Sum of Square Error for MEDV calculated using all variables:498.7258154857173
 Mean Square Error for MEDV calculated using all variables:9.974516309714346
+Thetas For Task 2a with Closed Form Solution:
+ [[22.94100877 -1.52519804 -3.65618777]]
 Predicted values for validation set with AGE and TAX with the Closed Form Solution:
 Predicted value for 1: 15.493043752110433, actual value: 12.7
 Predicted value for 2: 15.89347553332266, actual value: 13.5
