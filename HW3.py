@@ -51,23 +51,23 @@ class1Validation = np.delete(class1Validation,5,1)
 class2And3Validation = np.delete(class2And3Validation,5,1)
 
 def sigmoid(x, w, threshold=0.5):
-    p = 1 / (1 + np.exp(-np.matmul(x,w.transpose())))
+    p = 1 / (1 + np.exp(-x @ w))
     return np.where(p > threshold, 1, 0)
 
-#TP,FP,TN,FN should be the number of each kind of error occurring 
-def accuracy(TP, FP,TN,FN):
-    return ((TP+TN)/(TP+TN+FP+FN))
+def logistic_cost(w, X, y):
+    return -(y * np.log(sigmoid(X, w)) + (1 - y) * np.log(1 - sigmoid(X, w))).mean()
+
+
+def logistic_cost_grad(w, X, y):
+    return (X.T @ (sigmoid(X, w) - y)) / len(X)
+
+def accuracy(y, y_hat):
+    return (y_hat == y).sum() / len(y)
 
 def precision(TP,FP):
     return TP/(TP+FP)
 
-def logistic_loss(w, X, y):
-    sum = -(y * np.log(sigmoid(X, w)) - (1 - y) * np.log(1 - sigmoid(X, w)))
-    print(sum)
-    return sum/len(X)
-
-
-def logistic_loss_grad(w, X, y):
-    return (X.transpose() * (sigmoid(X, w) - y)) / len(X)
+w_opt = minimize(logistic_cost,params, jac=logistic_cost_grad, args=(class1Training, class1TrainingOutput)).x
+testingAccuracy = sigmoid(class1Validation,w_opt)
 #this gets us a new set of W's which form the w array we pass into the sigmoid 
-optimizedParams = minimize(logistic_loss, np.zeros(class1Training.shape[1]), jac=logistic_loss_grad, args=(class1Training, class1TrainingOutput), method="L-BFGS-B").x
+# optimizedParams = minimize(logistic_cost, np.zeros(class1Training.shape[1]), jac=logistic_cost_grad, args=(class1Training, class1TrainingOutput), method="L-BFGS-B").x
