@@ -23,6 +23,7 @@ with open('iris.data',encoding='utf-8') as f:
             tempData.append(0.0)
             class2And3Data.append(tempData)
             allData.append(tempData)
+            
         lineNum = lineNum+1
 #add in column of 1's for param 0
 class1Data = np.hstack((np.ones((len(class1Data), 1)), class1Data))
@@ -61,6 +62,7 @@ class1Validation = np.delete(class1Validation,5,1)
 class2And3Validation = np.delete(class2And3Validation,5,1)
 validationSet = np.delete(validationSet,5,1)
 def sigmoid(x, w, threshold=0.5):
+    # @ uses matrix multiplication
     p = 1 / (1 + np.exp(-x @ w))
     return np.where(p > threshold, 1, 0)
 
@@ -69,16 +71,39 @@ def logistic_cost(w, X, y):
 
 
 def logistic_cost_grad(w, X, y):
+    # @ uses matrix multiplication
     return (X.T @ (sigmoid(X, w) - y)) / len(X)
 
 def accuracy(y, y_hat):
-    return (y_hat == y).sum() / len(y)
+    TP = 0
+    FP = 0
+    FN = 0
+    TN = 0
+    for idx,num in enumerate(y):
+        if(num == y_hat[idx]):
+            if(num==1):
+                TP = TP+1
+            else:
+                TN = TN+1
+        else:
+            if(num==1):
+                FP = FP +1
+            else:
+                FN = FN + 1
+        totalAccuracy = (y_hat == y).sum() / len(y)
+    return [totalAccuracy,TP,TN,FP,FN]
 
 def precision(TP,FP):
     return TP/(TP+FP)
 
 #this gets us a new set of W's which form the w array we pass into the sigmoid 
 optimized_params = minimize(logistic_cost,params, jac=logistic_cost_grad, args=(trainingSet, trainingOutput)).x
+# optimized_params = minimize(logistic_cost,optimized_params, jac=logistic_cost_grad, args=(class2And3Training, class2And3TrainingOutput)).x
 print(optimized_params)
 testingAccuracy = sigmoid(validationSet,optimized_params)
-print(accuracy(validationOutput,testingAccuracy))
+accuracyInfo=accuracy(validationOutput,testingAccuracy)
+print(f"Accuracy: {accuracyInfo[0]}")
+print("Confusion Matrix:")
+print(f"|True Positive: {accuracyInfo[1]}  |  False Positive: {accuracyInfo[3]}|")
+print(f"|False Negative: {accuracyInfo[4]} |  True Negative: {accuracyInfo[2]} |")
+print(f"\nPrecision: {precision(accuracyInfo[1],accuracyInfo[3])}")
