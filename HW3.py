@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.optimize import minimize
+
+
 class1Data = []
 allData = []
 class2And3Data = []
@@ -67,16 +69,23 @@ def sigmoid(x, w, threshold=0.5):
     p = 1 / (1 + np.exp(-x @ w))
     return np.where(p > threshold, 1, 0)
 
+def sigmoid2(x, w, threshold=0.5):
+    # @ uses matrix multiplication
+    p = 1 / (1 + np.exp(-x @ w))
+    return p
+
 def logistic_cost(w, X, y):
-    return -(y * np.log(sigmoid(X, w)) + (1 - y) * np.log(1 - sigmoid(X, w))).mean()
+    return -(y * np.log(sigmoid2(X, w)) + (1 - y) * np.log(1 - sigmoid2(X, w))).mean()
 
 
 
 def logistic_cost_grad(w, X, y):
     # @ uses matrix multiplication
-    return (X.T @ (sigmoid(X, w) - y)) / len(X)
+    return (X.T @ (sigmoid2(X, w) - y)) / len(X)
 
 def accuracy(y, y_hat):
+    print(y)
+    print(y_hat)
     TP = 0
     FP = 0
     FN = 0
@@ -88,7 +97,7 @@ def accuracy(y, y_hat):
             else:
                 TN = TN+1
         else:
-            if(num==1):  #should be == 0, but that causes a divide by zero since our predictions are wrong
+            if(num==0):  #should be == 0, but that causes a divide by zero since our predictions are wrong
                 FP = FP +1
             else:
                 FN = FN + 1
@@ -98,6 +107,8 @@ def accuracy(y, y_hat):
 def precision(TP,FP):
     return TP/(TP+FP)
 #this gets us a new set of W's which form the w array we pass into the sigmoid
+print(trainingOutput)
+
 optimized_params = minimize(logistic_cost,params, jac=logistic_cost_grad, args=(trainingSet, trainingOutput)).x
 #optimized_params = minimize(logistic_cost,optimized_params, jac=logistic_cost_grad, args=(class2And3Training, class2And3TrainingOutput)).x
 print(optimized_params)
